@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
-import PostsList from "./PostsList";
 import API from "../api/api";
+import { useAlert } from "./CustomAlert";
 
 export default function PostsForm() {
+  const { showAlert } = useAlert();
   const [form, setForm] = useState({ title: "", description: "", img: "" });
 
   const handleChange = (e) => {
@@ -14,22 +14,20 @@ export default function PostsForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("/post", form);
-      alert("Post created!");
+      await API.post("/post", form);
+      showAlert("Post created!", "success");
       setForm({ title: "", description: "", img: "" });
     } catch (err) {
-      alert(err.response?.data || "Error creating post");
+      showAlert(err.response?.data || "Error creating post", "error");
     }
   };
 
   return (
-    <div>
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-md space-y-4 bg-white p-4 rounded-xl m-10 shadow"
-      >
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-6 shadow-xl animate-fade-in">
+      <h3 className="text-lg font-semibold text-slate-100 mb-4">New post</h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="title">
+          <label className="block text-sm font-medium text-slate-300 mb-1.5" htmlFor="title">
             Title
           </label>
           <input
@@ -38,31 +36,30 @@ export default function PostsForm() {
             type="text"
             value={form.title}
             onChange={handleChange}
+            placeholder="Post title"
             required
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2.5 rounded-xl border border-white/10 focus:outline-none transition"
           />
         </div>
 
         <div>
-          <label
-            className="block text-sm font-medium mb-1"
-            htmlFor="description"
-          >
+          <label className="block text-sm font-medium text-slate-300 mb-1.5" htmlFor="description">
             Description
           </label>
           <textarea
             id="description"
             name="description"
-            rows="4"
+            rows="3"
             value={form.description}
             onChange={handleChange}
+            placeholder="What's on your mind?"
             required
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          ></textarea>
+            className="w-full px-4 py-2.5 rounded-xl border border-white/10 focus:outline-none transition resize-none"
+          />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="img">
+          <label className="block text-sm font-medium text-slate-300 mb-1.5" htmlFor="img">
             Image URL
           </label>
           <input
@@ -71,17 +68,16 @@ export default function PostsForm() {
             type="url"
             value={form.img}
             onChange={handleChange}
-            placeholder="https://example.com/image.jpg"
-            // required
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="https://…"
+            className="w-full px-4 py-2.5 rounded-xl border border-white/10 focus:outline-none transition"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          className="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold py-2.5 rounded-xl transition active:scale-[0.98]"
         >
-          Create Post
+          Create post
         </button>
       </form>
     </div>

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../api/api";
+import { useAlert } from "../Components/CustomAlert";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -13,74 +14,72 @@ const Login = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await API.post("/login", formData);
+      await API.post("/login", formData);
       navigate("/profile");
     } catch (err) {
-      console.log(err);
-      alert("Invalid credentials!");
+      showAlert("Invalid credentials!", "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
-        <h2 className="text-2xl font-bold text-center mb-6">Login Account</h2>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl animate-slide-up">
+        <h2 className="text-xl sm:text-2xl font-bold text-center text-slate-100 mb-6">
+          Sign in
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              Email
+            </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="you@example.com"
+              className="w-full px-4 py-3 rounded-xl border border-white/10 focus:outline-none transition"
               required
             />
           </div>
 
-          {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              Password
+            </label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="••••••••"
+              className="w-full px-4 py-3 rounded-xl border border-white/10 focus:outline-none transition"
               required
             />
           </div>
 
-          {/* Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50"
+            className="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Signing in…" : "Sign in"}
           </button>
 
-          {/* Link to Register */}
-          <p className="text-center text-sm mt-3">
-            Don’t have an account?{" "}
-            <Link to="/" className="text-blue-600 hover:underline">
-              Register here
+          <p className="text-center text-sm text-slate-400 pt-2">
+            No account?{" "}
+            <Link to="/" className="text-cyan-400 hover:text-cyan-300 font-medium">
+              Register
             </Link>
           </p>
         </form>
